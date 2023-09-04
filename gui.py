@@ -12,25 +12,30 @@ root.config(bg='#2A0944')
 
 
 def addLink():
-    if not E1.get().strip():    # if empty, so if wont leave empty space in list
-        return
-    LB1.insert(LB1.size(), E1.get())
-    LB2.insert(LB2.size(), YouTube(E1.get()).title)
-
+    try:
+        if not E1.get().strip():
+            return
+        video = YouTube(E1.get())
+        LB1.insert(LB1.size(), E1.get())
+        LB2.insert(LB2.size(), video.title)
+    except Exception as e:
+        print(f"Error adding link: {e}")
 
 def download():
-    L2.config(text="The download has begun.")
-    for x in range(LB1.size()):
-        yt = YouTube(LB1.get(x))
-        video = yt.streams.filter(only_audio=True).first()
-        destination = './Songs'
-        out_file = video.download(output_path=destination)
-        base, ext = os.path.splitext(out_file)
-        new_file = base + '.mp3'
-        os.rename(out_file, new_file)
-        L2.config(text=yt.title + " has been downloaded.")
-    L2.config(text="The download has finished.")
-
+    try:
+        L2.config(text="The download has begun.")
+        for x in range(LB1.size()):
+            yt = YouTube(LB1.get(x))
+            video = yt.streams.filter(only_audio=True).first()
+            destination = './Songs'
+            out_file = video.download(output_path=destination)
+            base, ext = os.path.splitext(out_file)
+            new_file = base + '.mp3'
+            os.rename(out_file, new_file)
+            L2.config(text=yt.title + " has been downloaded.")
+        L2.config(text="The download has finished.")
+    except Exception as e:
+        print(f"Error during download: {e}")
 
 def threadingDownload():    # runs function on another thread
     # Call download function
